@@ -86,7 +86,8 @@ const getProductById = async (req: Request, res: Response): Promise<Response> =>
 // Create product
 const createProduct = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const { name, description, price, image, category, stock } = req.body;
+        const { name, description, price, category, stock } = req.body;
+        const file = (req as any).file;
 
         // Validate required fields
         if (!name || !price) {
@@ -112,12 +113,22 @@ const createProduct = async (req: Request, res: Response): Promise<Response> => 
             });
         }
 
+        // Get image URL - from uploaded file or from body (if URL provided)
+        let imageUrl = "";
+        if (file) {
+            // File uploaded - use the saved file path
+            imageUrl = `/uploads/${file.filename}`;
+        } else if (req.body.image) {
+            // URL provided in body
+            imageUrl = req.body.image;
+        }
+
         // Create new product
         const newProduct = new productModel({
             name,
             description: description || "",
             price,
-            image: image || "",
+            image: imageUrl,
             category: category || "",
             stock: stock || 0
         });
@@ -145,7 +156,8 @@ const createProduct = async (req: Request, res: Response): Promise<Response> => 
 const updateProduct = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
-        const { name, description, price, image, category, stock } = req.body;
+        const { name, description, price, category, stock } = req.body;
+        const file = (req as any).file;
 
         const product = await (productModel as any).findById(id);
         if (!product) {
@@ -175,9 +187,17 @@ const updateProduct = async (req: Request, res: Response): Promise<Response> => 
         if (name) product.name = name;
         if (description !== undefined) product.description = description;
         if (price !== undefined) product.price = price;
-        if (image !== undefined) product.image = image;
         if (category !== undefined) product.category = category;
         if (stock !== undefined) product.stock = stock;
+
+        // Handle image update
+        if (file) {
+            // New file uploaded - use the saved file path
+            product.image = `/uploads/${file.filename}`;
+        } else if (req.body.image !== undefined) {
+            // URL provided in body (or empty string to remove image)
+            product.image = req.body.image;
+        }
 
         product.updatedAt = new Date();
         await product.save();
