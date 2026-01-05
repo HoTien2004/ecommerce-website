@@ -66,7 +66,7 @@ const AdminLogin = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin../..apple.vn"
+                    placeholder="admin@apple.vn"
                     className="pl-10"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -102,7 +102,7 @@ const AdminLogin = () => {
             </form>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              Demo: admin../..apple.vn / admin123
+              Demo: admin@apple.vn / admin123
             </p>
           </CardContent>
         </Card>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Heart, ShoppingBag, Search, Menu, X, User, LogOut, MapPin, Package, Key } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -71,13 +71,19 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
             {categories.map((category) => (
-              <Link
+              <NavLink
                 key={category.slug}
                 to={category.isPage ? `/${category.slug}` : `/products/${category.slug}`}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className={({ isActive }) =>
+                  `text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'text-primary border-b-2 border-primary pb-1'
+                      : 'text-muted-foreground'
+                  }`
+                }
               >
                 {category.name}
-              </Link>
+              </NavLink>
             ))}
           </nav>
 
@@ -219,14 +225,18 @@ export const Header = () => {
             {/* Mobile Navigation */}
             <nav className="flex flex-col gap-2">
               {categories.map((category) => (
-                <Link
+                <NavLink
                   key={category.slug}
                   to={category.isPage ? `/${category.slug}` : `/products/${category.slug}`}
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
+                  className={({ isActive }) =>
+                    `px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      isActive ? 'bg-primary/5 text-primary' : 'text-muted-foreground hover:bg-secondary'
+                    }`
+                  }
                 >
                   {category.name}
-                </Link>
+                </NavLink>
               ))}
             </nav>
           </div>

@@ -53,10 +53,18 @@ import AdminOrders from "./pages/admin/orders/AdminOrders";
 import AdminOrderDetail from "./pages/admin/orders/AdminOrderDetail";
 import AdminUsers from "./pages/admin/users/AdminUsers";
 import AdminCategories from "./pages/admin/categories/AdminCategories";
-import AdminBrands from "./pages/admin/brands/AdminBrands";
-import AdminPayments from "./pages/admin/payments/AdminPayments";
+// import AdminBrands from "./pages/admin/brands/AdminBrands";
+// import AdminPayments from "./pages/admin/payments/AdminPayments";
 import AdminCoupons from "./pages/admin/coupons/AdminCoupons";
 import AdminBanners from "./pages/admin/banners/AdminBanners";
+import AdminNews from "./pages/admin/news/AdminNews";
+import CreateNews from "./pages/admin/news/CreateNews";
+import EditNews from "./pages/admin/news/EditNews";
+import AdminReviews from "./pages/admin/reviews/AdminReviews";
+import UserDetail from "./pages/admin/users/UserDetail";
+// import AdminSettings from "./pages/admin/settings/AdminSettings";
+// import AdminReports from "./pages/admin/reports/AdminReports";
+
 
 const queryClient = new QueryClient();
 
@@ -119,15 +127,22 @@ const App = () => (
                       <Route path="products/:id" element={<AdminProductDetail />} />
                       <Route path="products/:id/edit" element={<EditProduct />} />
                       <Route path="categories" element={<AdminCategories />} />
-                      <Route path="brands" element={<AdminBrands />} />
+                      {/* <Route path="brands" element={<AdminBrands />} /> */}
                       <Route path="orders" element={<AdminOrders />} />
                       <Route path="orders/:orderId" element={<AdminOrderDetail />} />
                       <Route path="users" element={<AdminUsers />} />
-                      <Route path="payments" element={<AdminPayments />} />
+                      <Route path="users/:id" element={<UserDetail />} />
+                      {/* <Route path="payments" element={<AdminPayments />} /> */}
                       <Route path="coupons" element={<AdminCoupons />} />
                       <Route path="banners" element={<AdminBanners />} />
+                      <Route path="reviews" element={<AdminReviews />} />
+                      <Route path="news" element={<AdminNews />} />
+                      <Route path="news/create" element={<CreateNews />} />
+                      <Route path="news/:id/edit" element={<EditNews />} />
+                      {/* <Route path="settings" element={<AdminSettings />} />
+                      <Route path="reports" element={<AdminReports />} /> */}
                     </Route>
-
+                    
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

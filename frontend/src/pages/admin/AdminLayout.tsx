@@ -8,15 +8,15 @@ import {
   LayoutDashboard,
   Package,
   FolderTree,
-  Building2,
   ShoppingCart,
   Users,
-  CreditCard,
   Tag,
   Image,
+  FileText,
   LogOut,
   Menu,
   X,
+  Star,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -24,10 +24,10 @@ const adminNavItems = [
   { path: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { path: "/admin/products", label: "Sản phẩm", icon: Package },
   { path: "/admin/categories", label: "Danh mục", icon: FolderTree },
-  { path: "/admin/brands", label: "Thương hiệu", icon: Building2 },
   { path: "/admin/orders", label: "Đơn hàng", icon: ShoppingCart },
   { path: "/admin/users", label: "Người dùng", icon: Users },
-  { path: "/admin/payments", label: "Thanh toán", icon: CreditCard },
+  { path: "/admin/reviews", label: "Đánh giá", icon: Star },
+  { path: "/admin/news", label: "Tin tức", icon: FileText },
   { path: "/admin/coupons", label: "Mã giảm giá", icon: Tag },
   { path: "/admin/banners", label: "Banner", icon: Image },
 ];
@@ -70,7 +70,7 @@ const AdminLayout = () => {
       >
         <div className="flex flex-col h-full">
           <div className="h-16 flex items-center justify-center border-b">
-            <span className="text-xl font-bold">🍎 Admin</span>
+            <span className="text-xl font-bold">Admin</span>
           </div>
 
           <ScrollArea className="flex-1 py-4">

@@ -4,10 +4,80 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
-import { products, categories, formatPrice } from "../../../data/products";
+import { products as initialProducts, categories, formatPrice } from "../../../data/products";
+import { toast } from "../../../hooks/use-toast";
+import { useState } from "react";
+
+// Thông số kỹ thuật theo danh mục
+const categorySpecs: Record<string, { label: string; key: string }[]> = {
+  iphone: [
+    { label: "Màn hình", key: "screen" },
+    { label: "Chip", key: "chip" },
+    { label: "RAM", key: "ram" },
+    { label: "Bộ nhớ trong", key: "storage" },
+    { label: "Camera sau", key: "rearCamera" },
+    { label: "Camera trước", key: "frontCamera" },
+    { label: "Pin", key: "battery" },
+    { label: "SIM", key: "sim" },
+    { label: "Hệ điều hành", key: "os" },
+  ],
+  ipad: [
+    { label: "Màn hình", key: "screen" },
+    { label: "Chip", key: "chip" },
+    { label: "RAM", key: "ram" },
+    { label: "Bộ nhớ trong", key: "storage" },
+    { label: "Camera sau", key: "rearCamera" },
+    { label: "Camera trước", key: "frontCamera" },
+    { label: "Kết nối", key: "connectivity" },
+    { label: "Hỗ trợ bút", key: "pencilSupport" },
+  ],
+  mac: [
+    { label: "Màn hình", key: "screen" },
+    { label: "Chip", key: "chip" },
+    { label: "CPU", key: "cpu" },
+    { label: "GPU", key: "gpu" },
+    { label: "RAM", key: "ram" },
+    { label: "SSD", key: "ssd" },
+    { label: "Cổng kết nối", key: "ports" },
+    { label: "Hệ điều hành", key: "os" },
+  ],
+  watch: [
+    { label: "Kích thước", key: "size" },
+    { label: "Màn hình", key: "screen" },
+    { label: "Chip", key: "chip" },
+    { label: "Chống nước", key: "waterResistance" },
+    { label: "GPS", key: "gps" },
+    { label: "Tính năng sức khỏe", key: "healthFeatures" },
+    { label: "Thời lượng pin", key: "battery" },
+  ],
+  airpods: [
+    { label: "Loại", key: "type" },
+    { label: "Chip", key: "chip" },
+    { label: "Chống ồn", key: "anc" },
+    { label: "Chế độ xuyên âm", key: "transparency" },
+    { label: "Thời lượng nghe", key: "listeningTime" },
+    { label: "Thời lượng pin (kèm hộp)", key: "totalBattery" },
+    { label: "Chống nước", key: "waterResistance" },
+  ],
+  "phu-kien": [
+    { label: "Loại phụ kiện", key: "accessoryType" },
+    { label: "Tương thích", key: "compatibility" },
+    { label: "Chất liệu", key: "material" },
+    { label: "Màu sắc", key: "color" },
+    { label: "Công suất", key: "power" },
+  ],
+};
+
+// Mock specs data for display
+const mockProductSpecs: Record<string, Record<string, string>> = {
+  "1": { screen: "6.7 inch OLED", chip: "A17 Pro", ram: "8GB", storage: "256GB", rearCamera: "48MP", frontCamera: "12MP", battery: "4422mAh", sim: "1 Nano SIM & 1 eSIM", os: "iOS 17" },
+  "2": { screen: "6.1 inch OLED", chip: "A16 Bionic", ram: "6GB", storage: "128GB", rearCamera: "48MP", frontCamera: "12MP", battery: "3349mAh", sim: "1 Nano SIM & 1 eSIM", os: "iOS 17" },
+  "3": { screen: "16.2 inch Liquid Retina XDR", chip: "M3 Pro", cpu: "12-core", gpu: "18-core", ram: "36GB", ssd: "512GB", ports: "3x Thunderbolt 4, HDMI, SD, MagSafe", os: "macOS Sonoma" },
+};
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const [products, setProducts] = useState(initialProducts);
   const navigate = useNavigate();
 
   const product = products.find((p) => p.id === id);
@@ -22,8 +92,14 @@ const ProductDetail = () => {
       </div>
     );
   }
-
+  const handleDelete = (id: string) => {
+    setProducts(products.filter(p => p.id !== id));
+    toast({ title: "Đã xóa sản phẩm" });
+    navigate("/admin/products");
+  };
   const category = categories.find((c) => c.slug === product.category);
+  const specs = categorySpecs[product.category] || [];
+  const productSpecs = mockProductSpecs[product.id] || {};
 
   return (
     <>
@@ -49,7 +125,7 @@ const ProductDetail = () => {
                 Sửa
               </Link>
             </Button>
-            <Button variant="destructive">
+            <Button variant="destructive" onClick={() => handleDelete(product.id)}>
               <Trash2 className="w-4 h-4 mr-2" />
               Xóa
             </Button>
@@ -114,6 +190,25 @@ const ProductDetail = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Thông số kỹ thuật theo danh mục */}
+        {specs.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Thông số kỹ thuật</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {specs.map((spec) => (
+                  <div key={spec.key} className="p-3 bg-muted/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">{spec.label}</p>
+                    <p className="font-medium">{productSpecs[spec.key] || "—"}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </>
   );

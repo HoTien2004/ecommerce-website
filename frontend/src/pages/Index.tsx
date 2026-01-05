@@ -3,7 +3,6 @@ import { HeroBanner } from "../components/home/HeroBanner";
 import { FeatureBoxes } from "../components/home/FeatureBoxes";
 import { CategoryGrid } from "../components/home/CategoryGrid";
 import { HotPromotion } from "../components/home/HotPromotion";
-// import { FeaturedProducts } from "../components/home/FeaturedProducts";
 import { NewProducts } from "../components/home/NewProducts";
 import { NewsSection } from "../components/home/NewsSection";
 import { Helmet } from "react-helmet-async";
@@ -23,7 +22,6 @@ const Index = () => {
         <FeatureBoxes />
         <CategoryGrid />
         <HotPromotion />
-        {/* <FeaturedProducts /> */}
         <NewProducts />
         <NewsSection />
       </Layout>

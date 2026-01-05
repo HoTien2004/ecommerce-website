@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardHeader } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Badge } from "../../../components/ui/badge";
@@ -20,10 +20,13 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { Helmet } from "react-helmet-async";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
-import { products, categories, formatPrice } from "../../../data/products";
+import { Plus, Search, Edit, Trash2, Eye, Package } from "lucide-react";
+import { products as initialProducts, categories, formatPrice } from "../../../data/products";
+import { useToast } from "../../../hooks/use-toast";
 
 const AdminProducts = () => {
+  const { toast } = useToast();
+  const [products, setProducts] = useState(initialProducts);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -32,6 +35,19 @@ const AdminProducts = () => {
     const matchesCategory = categoryFilter === "all" || p.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
+
+  // Tính tổng số sản phẩm theo danh mục
+  const categoryStats = categories.map(cat => ({
+    ...cat,
+    count: products.filter(p => p.category === cat.slug).length
+  }));
+
+  const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+
+  const handleDelete = (id: string) => {
+    setProducts(products.filter(p => p.id !== id));
+    toast({ title: "Đã xóa sản phẩm" });
+  };
 
   return (
     <>
@@ -43,7 +59,7 @@ const AdminProducts = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">Sản phẩm</h1>
-            <p className="text-muted-foreground">{products.length} sản phẩm</p>
+            <p className="text-muted-foreground">Quản lý {products.length} sản phẩm</p>
           </div>
           <Button asChild>
             <Link to="/admin/products/create">
@@ -51,6 +67,25 @@ const AdminProducts = () => {
               Thêm sản phẩm
             </Link>
           </Button>
+        </div>
+
+        {/* Thống kê */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          {categoryStats.map(cat => (
+            <Card key={cat.id} className="cursor-pointer hover:border-primary transition-colors" onClick={() => setCategoryFilter(cat.slug)}>
+              <CardContent className="p-4 text-center">
+                <p className="text-2xl font-bold">{cat.count}</p>
+                <p className="text-xs text-muted-foreground">{cat.name}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <Package className="w-4 h-4 text-muted-foreground" />
+            <span>Tổng tồn kho: <strong>{totalStock.toLocaleString("vi-VN")}</strong> sản phẩm</span>
+          </div>
         </div>
 
         <Card>
@@ -89,6 +124,7 @@ const AdminProducts = () => {
                     <TableHead>Tên sản phẩm</TableHead>
                     <TableHead>Danh mục</TableHead>
                     <TableHead className="text-right">Giá</TableHead>
+                    <TableHead className="text-center">Tồn kho</TableHead>
                     <TableHead className="text-center">Trạng thái</TableHead>
                     <TableHead className="text-right">Thao tác</TableHead>
                   </TableRow>
@@ -103,17 +139,31 @@ const AdminProducts = () => {
                           className="w-12 h-12 object-cover rounded-lg"
                         />
                       </TableCell>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>
-                        {categories.find((c) => c.slug === product.category)?.name}
+                      <TableCell className="font-medium max-w-[200px]">
+                        <p className="truncate">{product.name}</p>
                       </TableCell>
-                      <TableCell className="text-right">{formatPrice(product.price)}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {categories.find((c) => c.slug === product.category)?.name}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {formatPrice(product.price)}
+                      </TableCell>
                       <TableCell className="text-center">
-                        {product.isNew && <Badge>Mới</Badge>}
-                        {product.isSale && <Badge variant="destructive">Sale</Badge>}
+                        <span className={product.stock && product.stock > 0 ? "text-green-600" : "text-destructive"}>
+                          {product.stock || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-1">
+                          {product.isNew && <Badge className="text-xs">Mới</Badge>}
+                          {product.isSale && <Badge variant="destructive" className="text-xs">Sale</Badge>}
+                          {!product.isNew && !product.isSale && <span className="text-muted-foreground text-xs">-</span>}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-1">
                           <Button variant="ghost" size="icon" asChild>
                             <Link to={`/admin/products/${product.id}`}>
                               <Eye className="w-4 h-4" />
@@ -124,7 +174,7 @@ const AdminProducts = () => {
                               <Edit className="w-4 h-4" />
                             </Link>
                           </Button>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id)}>
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </div>
@@ -134,6 +184,12 @@ const AdminProducts = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                Không tìm thấy sản phẩm nào
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

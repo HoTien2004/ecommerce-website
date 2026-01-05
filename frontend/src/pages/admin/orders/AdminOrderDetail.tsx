@@ -18,7 +18,7 @@ import { useToast } from "../../../hooks/use-toast";
 const mockOrderDetails: Record<string, any> = {
   ORD001: {
     id: "ORD001",
-    customer: { name: "Nguyễn Văn A", email: "a../../..email.com", phone: "0912 345 678" },
+    customer: { name: "Nguyễn Văn A", email: "a@email.com", phone: "0912 345 678" },
     address: "123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM",
     date: "2024-01-15",
     status: "delivered",
@@ -32,7 +32,7 @@ const mockOrderDetails: Record<string, any> = {
   },
   ORD002: {
     id: "ORD002",
-    customer: { name: "Trần Thị B", email: "b../../..email.com", phone: "0923 456 789" },
+    customer: { name: "Trần Thị B", email: "b@email.com", phone: "0923 456 789" },
     address: "456 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM",
     date: "2024-01-14",
     status: "shipping",
@@ -46,7 +46,7 @@ const mockOrderDetails: Record<string, any> = {
   },
   ORD003: {
     id: "ORD003",
-    customer: { name: "Lê Văn C", email: "c../../..email.com", phone: "0934 567 890" },
+    customer: { name: "Lê Văn C", email: "c@email.com", phone: "0934 567 890" },
     address: "789 Trần Hưng Đạo, Quận 5, TP.HCM",
     date: "2024-01-13",
     status: "processing",
@@ -59,6 +59,49 @@ const mockOrderDetails: Record<string, any> = {
     subtotal: 18470000,
     shipping: 0,
     total: 18470000,
+  },
+  ORD004: {
+    id: "ORD004",
+    customer: { name: "Phạm Thị D", email: "d@email.com", phone: "0923 456 789" },
+    address: "123 Lê Lợi, Quận 1, TP.HCM",
+    date: "2024-01-14",
+    status: "processing",
+    payment: "Banking",
+    items: [
+      { id: "4", name: 'iPad Pro 11" M4', qty: 1, price: 28990000, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=100" },
+    ],
+    subtotal: 28990000,
+    shipping: 0,
+    total: 28990000,
+  },
+  ORD005: {
+    id: "ORD005",
+    customer: { name: "Hoàng Văn E", email: "e@email.com", phone: "0912 345 678" },
+    address: "456 Nguyễn Trãi, Quận 5, TP.HCM",
+    date: "2024-01-15",
+    status: "pending",
+    payment: "Banking",
+    items: [
+      { id: "2", name: 'MacBook Pro 14" M3 Pro', qty: 1, price: 45990000, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=100" },
+      { id: "6", name: 'AirPods Pro 2', qty: 1, price: 6990000, image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=100" },
+    ],
+    subtotal: 52980000,
+    shipping: 0,
+    total: 52980000,
+  },
+  ORD006: {
+    id: "ORD006",
+    customer: { name: "Đỗ Thị F", email: "f@email.com", phone: "0901234567" },
+    address: "789 Trần Hưng Đạo, Quận 5, TP.HCM",
+    date: "2024-01-16",
+    status: "pending",
+    payment: "COD",
+    items: [
+      { id: "1", name: 'iPhone 15 Pro Max 256GB', qty: 1, price: 34990000, image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=100" },
+    ],
+    subtotal: 34990000,
+    shipping: 0,
+    total: 34990000,
   },
 };
 

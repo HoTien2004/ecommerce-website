@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardHeader } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 import { Badge } from "../../../components/ui/badge";
 import {
   Table,
@@ -12,24 +13,35 @@ import {
   TableRow,
 } from "../../../components/ui/table";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../../components/ui/dialog";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
 import { Helmet } from "react-helmet-async";
-import { Search, Eye, Shield, Ban, UserCheck } from "lucide-react";
+import { Search, Eye, Ban, UserCheck, Shield } from "lucide-react";
 import { useToast } from "../../../hooks/use-toast";
+import { Link } from "react-router-dom";
 
-const mockUsers = [
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: "admin" | "moderator" | "user";
+  status: "active" | "banned";
+  orders: number;
+  createdAt: string;
+}
+
+const mockUsers: User[] = [
   { id: "1", name: "Nguyễn Văn A", email: "a@email.com", phone: "0912 345 678", role: "user", status: "active", orders: 5, createdAt: "2024-01-01" },
   { id: "2", name: "Trần Thị B", email: "b@email.com", phone: "0923 456 789", role: "user", status: "active", orders: 3, createdAt: "2024-01-05" },
   { id: "3", name: "Lê Văn C", email: "c@email.com", phone: "0934 567 890", role: "user", status: "banned", orders: 1, createdAt: "2024-01-10" },
@@ -43,13 +55,22 @@ const roleColors: Record<string, string> = {
   user: "bg-gray-500",
 };
 
+const roleLabels: Record<string, string> = {
+  admin: "Quản trị viên",
+  moderator: "Điều hành viên",
+  user: "Người dùng",
+};
+
 const AdminUsers = () => {
   const { toast } = useToast();
+  const [users, setUsers] = useState<User[]>(mockUsers);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [newRole, setNewRole] = useState<"admin" | "moderator" | "user">("user");
 
-  const filteredUsers = mockUsers.filter((u) => {
+  const filteredUsers = users.filter((u) => {
     const matchesSearch = 
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase());
@@ -57,11 +78,27 @@ const AdminUsers = () => {
     return matchesSearch && matchesRole;
   });
 
-  const handleRoleChange = (userId: string, newRole: string) => {
-    toast({ title: `Đã thay đổi quyền thành "${newRole}"` });
+  const openRoleDialog = (user: User) => {
+    setSelectedUser(user);
+    setNewRole(user.role);
+    setRoleDialogOpen(true);
+  };
+
+  const handleRoleChange = () => {
+    if (selectedUser) {
+      setUsers(users.map((u) =>
+        u.id === selectedUser.id ? { ...u, role: newRole } : u
+      ));
+      toast({ title: `Đã thay đổi vai trò thành "${roleLabels[newRole]}"` });
+      setRoleDialogOpen(false);
+    }
   };
 
   const handleToggleBan = (userId: string, currentStatus: string) => {
+    const newStatus = currentStatus === "banned" ? "active" : "banned";
+    setUsers(users.map((u) =>
+      u.id === userId ? { ...u, status: newStatus as "active" | "banned" } : u
+    ));
     const action = currentStatus === "banned" ? "mở khóa" : "khóa";
     toast({ title: `Đã ${action} tài khoản` });
   };
@@ -75,7 +112,7 @@ const AdminUsers = () => {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Người dùng</h1>
-          <p className="text-muted-foreground">{mockUsers.length} người dùng</p>
+          <p className="text-muted-foreground">{users.length} người dùng</p>
         </div>
 
         <Card>
@@ -96,9 +133,9 @@ const AdminUsers = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="moderator">Moderator</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Quản trị viên</SelectItem>
+                  <SelectItem value="moderator">Điều hành viên</SelectItem>
+                  <SelectItem value="user">Người dùng</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -128,7 +165,7 @@ const AdminUsers = () => {
                       <TableCell>{user.phone}</TableCell>
                       <TableCell className="text-center">{user.orders}</TableCell>
                       <TableCell className="text-center">
-                        <Badge className={roleColors[user.role]}>{user.role}</Badge>
+                        <Badge className={roleColors[user.role]}>{roleLabels[user.role]}</Badge>
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge variant={user.status === "active" ? "outline" : "destructive"}>
@@ -137,56 +174,19 @@ const AdminUsers = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="ghost" size="icon" onClick={() => setSelectedUser(user)}>
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="bg-background">
-                              <DialogHeader>
-                                <DialogTitle>Chi tiết người dùng</DialogTitle>
-                              </DialogHeader>
-                              {selectedUser && (
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                      <p className="text-sm text-muted-foreground">Họ tên</p>
-                                      <p className="font-medium">{selectedUser.name}</p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm text-muted-foreground">Email</p>
-                                      <p className="font-medium">{selectedUser.email}</p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm text-muted-foreground">Điện thoại</p>
-                                      <p className="font-medium">{selectedUser.phone}</p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm text-muted-foreground">Ngày đăng ký</p>
-                                      <p className="font-medium">{new Date(selectedUser.createdAt).toLocaleDateString("vi-VN")}</p>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground mb-2">Phân quyền</p>
-                                    <Select 
-                                      defaultValue={selectedUser.role}
-                                      onValueChange={(v) => handleRoleChange(selectedUser.id, v)}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="user">User</SelectItem>
-                                        <SelectItem value="moderator">Moderator</SelectItem>
-                                        <SelectItem value="admin">Admin</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </div>
-                              )}
-                            </DialogContent>
-                          </Dialog>
+                          <Button variant="ghost" size="icon" asChild>
+                            <Link to={`/admin/users/${user.id}`}>
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openRoleDialog(user)}
+                            title="Phân quyền"
+                          >
+                            <Shield className="w-4 h-4 text-blue-500" />
+                          </Button>
                           <Button 
                             variant="ghost" 
                             size="icon"
@@ -208,6 +208,39 @@ const AdminUsers = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Role Change Dialog */}
+      <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+        <DialogContent className="bg-background">
+          <DialogHeader>
+            <DialogTitle>Phân quyền người dùng</DialogTitle>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-4">
+              <div>
+                <p className="font-medium">{selectedUser.name}</p>
+                <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Vai trò</Label>
+                <Select value={newRole} onValueChange={(v: "admin" | "moderator" | "user") => setNewRole(v)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">Người dùng</SelectItem>
+                    <SelectItem value="moderator">Điều hành viên</SelectItem>
+                    <SelectItem value="admin">Quản trị viên</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button className="w-full" onClick={handleRoleChange}>
+                Cập nhật vai trò
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

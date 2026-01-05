@@ -72,9 +72,11 @@ const News = () => {
                       {new Date(article.date).toLocaleDateString("vi-VN")}
                     </span>
                   </div>
-                  <h2 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {article.title}
-                  </h2>
+                  <Link to={`/news/${article.id}`}>
+                    <h2 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {article.title}
+                    </h2>
+                  </Link>
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                     {article.excerpt}
                   </p>

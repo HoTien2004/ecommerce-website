@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent } from "../../../components/ui/card";
+import { Card, CardContent} from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -115,7 +115,6 @@ const AdminCategories = () => {
                 <TableRow>
                   <TableHead className="w-[80px]">Ảnh</TableHead>
                   <TableHead>Tên danh mục</TableHead>
-                  <TableHead>Slug</TableHead>
                   <TableHead>Mô tả</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
                 </TableRow>
@@ -131,7 +130,6 @@ const AdminCategories = () => {
                       />
                     </TableCell>
                     <TableCell className="font-medium">{cat.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{cat.slug}</TableCell>
                     <TableCell className="max-w-[200px] truncate">{cat.description}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">

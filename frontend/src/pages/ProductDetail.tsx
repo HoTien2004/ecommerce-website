@@ -73,7 +73,7 @@ const ProductDetail = () => {
     { id: "r1", author: "Nguyễn Văn A", rating: Math.round(product.rating), comment: "Sản phẩm rất tốt, đáng tiền.", date: "2025-11-01" },
     { id: "r2", author: "Trần Thị B", rating: Math.max(4, Math.round(product.rating) - 1), comment: "Máy chạy mượt, pin ổn.", date: "2025-10-15" },
   ];
-  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [reviews] = useState<Review[]>(initialReviews);
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
 
 

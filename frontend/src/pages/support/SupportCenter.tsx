@@ -8,10 +8,9 @@ import {
   RefreshCw, 
   MessageCircle,
   Phone,
-  Mail,
-  MapPin
+  Mail
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 
 const supportLinks = [
@@ -90,7 +89,7 @@ const SupportCenter = () => {
                   <Mail className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-primary font-bold">support../..applestore.vn</p>
+                <p className="text-primary font-bold">support@applestore.vn</p>
                 <p className="text-sm text-muted-foreground">Phản hồi trong 24h</p>
               </div>
               <div className="text-center">
