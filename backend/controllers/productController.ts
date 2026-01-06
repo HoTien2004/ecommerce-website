@@ -249,4 +249,3 @@ const deleteProduct = async (req: Request, res: Response): Promise<Response> => 
 }
 
 export { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
-

@@ -224,4 +224,5 @@ userRouter.put("/profile", verifyToken, updateUserProfile);
  */
 userRouter.put("/password", verifyToken, changePassword);
 
+
 export default userRouter;
